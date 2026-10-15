@@ -170,7 +170,8 @@ def modifies_known_mutable(obj: t.Any, attr: str) -> bool:
     """
     for typespec, unsafe in _mutable_spec:
         if isinstance(obj, typespec):
-            return attr in unsafe
+            if attr in unsafe:
+                return True
     return False
 
 

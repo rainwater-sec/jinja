@@ -10,6 +10,11 @@ from jinja2.sandbox import ImmutableSandboxedEnvironment
 from jinja2.sandbox import SandboxedEnvironment
 from jinja2.sandbox import unsafe
 
+from collections import deque
+
+import pytest
+from markupsafe import escape
+
 
 class PrivateStuff:
     def bar(self):
@@ -61,6 +66,26 @@ class TestSandbox:
         pytest.raises(SecurityError, env.from_string("{{ [].clear() }}").render)
         pytest.raises(SecurityError, env.from_string("{{ [1].pop() }}").render)
         pytest.raises(SecurityError, env.from_string("{{ {1:2}.clear() }}").render)
+        pytest.raises(
+            SecurityError,
+            env.from_string("{{ x.appendleft(1) }}").render,
+            x=deque([1, 2]),
+        )
+        pytest.raises(
+            SecurityError,
+            env.from_string("{{ x.popleft() }}").render,
+            x=deque([1, 2]),
+        )
+        pytest.raises(
+            SecurityError,
+            env.from_string("{{ x.extendleft([3]) }}").render,
+            x=deque([1, 2]),
+        )
+        pytest.raises(
+            SecurityError,
+            env.from_string("{{ x.rotate(1) }}").render,
+            x=deque([1, 2]),
+        )
 
     def test_restricted(self, env):
         env = SandboxedEnvironment()

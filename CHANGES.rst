@@ -13,6 +13,10 @@ Unreleased
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`1793`
 -   Use ``flit_core`` instead of ``setuptools`` as build backend.
+-   ``ImmutableSandboxedEnvironment`` now blocks ``deque`` methods that
+    modify the object, such as ``appendleft`` and ``popleft``. The
+    ``deque`` entry in the mutable type table was never reached because
+    ``deque`` matches ``MutableSequence`` first. :issue:`2282`
 
 
 Version 3.1.6
